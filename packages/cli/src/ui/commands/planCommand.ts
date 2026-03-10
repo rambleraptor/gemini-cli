@@ -52,7 +52,7 @@ export const planCommand: SlashCommand = {
   description: 'Switch to Plan Mode and view current plan',
   kind: CommandKind.BUILT_IN,
   autoExecute: false,
-  action: async (context) => {
+  action: async (context, args) => {
     const config = context.services.config;
     if (!config) {
       debugLogger.debug('Plan command: config is not available in context');
@@ -64,6 +64,13 @@ export const planCommand: SlashCommand = {
 
     if (previousApprovalMode !== ApprovalMode.PLAN) {
       coreEvents.emitFeedback('info', 'Switched to Plan Mode.');
+    }
+
+    if (args) {
+      return {
+        type: 'submit_prompt',
+        content: args,
+      };
     }
 
     const approvedPlanPath = config.getApprovedPlanPath();

@@ -100,6 +100,26 @@ describe('planCommand', () => {
     );
   });
 
+  it('should return a submit_prompt action if arguments are provided', async () => {
+    vi.mocked(mockContext.services.config!.getApprovedPlanPath).mockReturnValue(
+      undefined,
+    );
+
+    if (!planCommand.action) throw new Error('Action missing');
+    const result = await planCommand.action(
+      mockContext,
+      'implement authentication',
+    );
+
+    expect(mockContext.services.config!.setApprovalMode).toHaveBeenCalledWith(
+      ApprovalMode.PLAN,
+    );
+    expect(result).toEqual({
+      type: 'submit_prompt',
+      content: 'implement authentication',
+    });
+  });
+
   it('should display the approved plan from config', async () => {
     const mockPlanPath = '/mock/plans/dir/approved-plan.md';
     vi.mocked(mockContext.services.config!.isPlanEnabled).mockReturnValue(true);
